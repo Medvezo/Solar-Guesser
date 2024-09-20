@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react'
-import { useFrame, useLoader } from '@react-three/fiber'
+import { useRef, useEffect, useState } from 'react'
+import { useFrame, useLoader, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
+import { Html } from '@react-three/drei'
 
 export interface PlanetProps {
   name: string
@@ -11,11 +12,15 @@ export interface PlanetProps {
   textureMap: string
   isDynamic: boolean
   speed: number
+  description: string
+  onFocus: (name: string, description: string) => void
 }
 
-const Planet = ({  radius, orbitRadius, rotationSpeed, orbitSpeed, textureMap, isDynamic, speed }: PlanetProps) => {
+const Planet = ({ name, radius, orbitRadius, rotationSpeed, orbitSpeed, textureMap, isDynamic, speed, description, onFocus }: PlanetProps) => {
   const planetRef = useRef<THREE.Mesh>(null)
   const texture = useLoader(THREE.TextureLoader, textureMap)
+  const [hovered, setHovered] = useState(false)
+  const { camera } = useThree()
 
   useFrame((_, delta) => {
     if (isDynamic && planetRef.current) {
@@ -36,10 +41,33 @@ const Planet = ({  radius, orbitRadius, rotationSpeed, orbitSpeed, textureMap, i
     }
   }, [])
 
+  const handleClick = () => {
+    if (planetRef.current) {
+      const position = new THREE.Vector3()
+      planetRef.current.getWorldPosition(position)
+      camera.position.set(position.x, position.y + radius * 2, position.z + radius * 5)
+      camera.lookAt(position)
+      onFocus(name, description)
+    }
+  }
+
   return (
-    <mesh ref={planetRef} position={[orbitRadius, 0, 0]}>
+    <mesh 
+      ref={planetRef} 
+      position={[orbitRadius, 0, 0]}
+      onPointerOver={() => setHovered(true)}
+      onPointerOut={() => setHovered(false)}
+      onClick={handleClick}
+    >
       <sphereGeometry args={[radius, 32, 32]} />
       <meshStandardMaterial map={texture} />
+      {hovered && (
+        <Html distanceFactor={10}>
+          <div className="bg-black bg-opacity-50 text-white p-2 rounded">
+            {name}
+          </div>
+        </Html>
+      )}
     </mesh>
   )
 }
