@@ -9,9 +9,9 @@ interface ControlsProps {
 
 const Controls: React.FC<ControlsProps> = ({ isDynamic, setIsDynamic, speed, setSpeed }) => {
   return (
-    <div className="absolute bottom-5 left-5 flex items-center gap-2.5 bg-black bg-opacity-50 p-2.5 rounded ">
+    <div className="absolute bottom-5 left-5 flex items-center gap-2.5 bg-black bg-opacity-50 p-2.5 rounded">
       <button
-        className="px-2.5 py-1.5 cursor-pointer"
+        className="px-2.5 py-1.5 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded"
         onClick={() => setIsDynamic(!isDynamic)}
       >
         {isDynamic ? 'Pause' : 'Start'}
@@ -25,7 +25,7 @@ const Controls: React.FC<ControlsProps> = ({ isDynamic, setIsDynamic, speed, set
         onChange={(e) => setSpeed(parseFloat(e.target.value))}
         className="w-24"
       />
-      <span>Speed: {speed.toFixed(1)}x</span>
+      <span className="text-white">Speed: {speed.toFixed(1)}x</span>
     </div>
   )
 }
