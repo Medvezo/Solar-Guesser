@@ -95,16 +95,16 @@ const Sun = () => {
       sunMaterial.uniforms.time.value += delta
     }
     if (lightRef.current) {
-      lightRef.current.intensity = 500 + Math.sin(Date.now() * 0.001) * 50
+      lightRef.current.intensity = 1000 + Math.sin(Date.now() * 0.001) * 100
     }
   })
 
   return (
     <group>
       <mesh ref={sunRef} material={sunMaterial}>
-        <sphereGeometry args={[2, 128, 128]} />
+        <sphereGeometry args={[3, 128, 128]} />
       </mesh>
-      <pointLight ref={lightRef} intensity={500} distance={100} decay={2} />
+      <pointLight ref={lightRef} intensity={1000} distance={200} decay={2} />
     </group>
   )
 }
