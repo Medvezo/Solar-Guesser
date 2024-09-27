@@ -27,6 +27,7 @@ function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
 	const [speed, setSpeed] = useState(1);
 	const [focusedPlanet, setFocusedPlanet] = useState<{ name: string; description: string; ref: THREE.Mesh | null } | null>(null);
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const controlsRef = useRef<any>(null);
 	const cameraRef = useRef<THREE.PerspectiveCamera>(null);
 
