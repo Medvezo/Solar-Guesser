@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
-import { useState } from "react";
+import { useState, useRef } from "react";
+import * as THREE from 'three';
 
 // Components
 import Planet from "./components/planets/Planet";
@@ -8,6 +9,7 @@ import Sun from "./components/planets/Sun";
 import OrbitLine from "./components/view/OrbitLine";
 import Controls from "./components/view/Controls";
 import PlanetInfo from "./components/view/PlanetInfo";
+import AsteroidBelt from "./components/planets/AsteroidBelt";
 
 // TODO: Add texture maps to planets
 const planets = [
@@ -24,34 +26,49 @@ const planets = [
 function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
 	const [speed, setSpeed] = useState(1);
-	const [focusedPlanet, setFocusedPlanet] = useState<{ name: string; description: string } | null>(null);
+	const [focusedPlanet, setFocusedPlanet] = useState<{ name: string; description: string; ref: THREE.Mesh | null } | null>(null);
+	const controlsRef = useRef<any>(null);
+	const cameraRef = useRef<THREE.PerspectiveCamera>(null);
 
-	const handlePlanetFocus = (name: string, description: string) => {
-		setFocusedPlanet({ name, description });
+	const handlePlanetFocus = (name: string, description: string, ref: THREE.Mesh) => {
+		setFocusedPlanet({ name, description, ref });
+		if (controlsRef.current) {
+			controlsRef.current.enabled = false;
+		}
+	};
+
+	const handleClosePlanetInfo = () => {
+		setFocusedPlanet(null);
+		if (controlsRef.current) {
+			controlsRef.current.enabled = true;
+		}
 	};
 
 	return (
 		<>
 			<Canvas style={{ height: "100vh" }}>
-				<PerspectiveCamera makeDefault position={[0, 30, 50]} fov={75} />
-				<OrbitControls />
+				<PerspectiveCamera ref={cameraRef} makeDefault position={[0, 30, 50]} fov={75} />
+				<OrbitControls ref={controlsRef} />
 				<ambientLight intensity={0.1} />
 				<Stars radius={300} depth={60} count={20000} factor={7} saturation={0} fade />
 
-				<Sun />
-				{planets.map((planet) => (
-					<Planet 
-						key={planet.name} 
-						{...planet} 
-						orbitRadius={planet.semiMajorAxis} 
-						isDynamic={isDynamic} 
-						speed={speed} 
-						onFocus={handlePlanetFocus} 
-					/>
-				))}
-				{planets.map((planet) => (
-					<OrbitLine key={planet.name} semiMajorAxis={planet.semiMajorAxis} eccentricity={planet.eccentricity} />
-				))}
+					<Sun />
+					<AsteroidBelt />
+					{planets.map((planet) => (
+						<Planet 
+							key={planet.name} 
+							{...planet} 
+							orbitRadius={planet.semiMajorAxis} 
+							isDynamic={isDynamic} 
+							speed={speed} 
+							onFocus={handlePlanetFocus} 
+							isFocused={focusedPlanet?.name === planet.name}
+							cameraRef={cameraRef}
+						/>
+					))}
+					{planets.map((planet) => (
+						<OrbitLine key={planet.name} semiMajorAxis={planet.semiMajorAxis} eccentricity={planet.eccentricity} />
+					))}
 			</Canvas>
 			<Controls
 				isDynamic={isDynamic}
@@ -59,7 +76,7 @@ function App() {
 				speed={speed}
 				setSpeed={setSpeed}
 			/>
-			{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={() => setFocusedPlanet(null)} />}
+			{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
 		</>
 	);
 }

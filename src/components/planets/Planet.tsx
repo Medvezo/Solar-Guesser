@@ -13,12 +13,14 @@ export interface PlanetProps {
   isDynamic: boolean
   speed: number
   description: string
-  onFocus: (name: string, description: string) => void
+  onFocus: (name: string, description: string, ref: THREE.Mesh) => void
   semiMajorAxis: number;
   eccentricity: number;
+  isFocused: boolean;
+  cameraRef: React.RefObject<THREE.PerspectiveCamera>;
 }
 
-const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbitSpeed, orbitRadius, textureMap, isDynamic, speed, description, onFocus }: PlanetProps) => {
+const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbitSpeed, orbitRadius, textureMap, isDynamic, speed, description, onFocus, isFocused, cameraRef }: PlanetProps) => {
   const planetRef = useRef<THREE.Mesh>(null)
   const texture = useLoader(THREE.TextureLoader, textureMap)
   const [hovered, setHovered] = useState(false)
@@ -42,6 +44,14 @@ const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbi
 
       // Apply orbital velocity to the angle change
       planetRef.current.userData.angle += orbitalVelocity * orbitSpeed * delta * speed
+
+      // Update camera position if this planet is focused
+      if (isFocused && cameraRef.current) {
+        const cameraOffset = new THREE.Vector3(radius * 5, radius * 2, radius * 5)
+        const newCameraPosition = planetRef.current.position.clone().add(cameraOffset)
+        cameraRef.current.position.copy(newCameraPosition)
+        cameraRef.current.lookAt(planetRef.current.position)
+      }
     }
   })
 
@@ -55,9 +65,32 @@ const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbi
     if (planetRef.current) {
       const position = new THREE.Vector3()
       planetRef.current.getWorldPosition(position)
-      camera.position.set(position.x, position.y + radius * 2, position.z + radius * 5)
-      camera.lookAt(position)
-      onFocus(name, description)
+      
+      // Calculate a position slightly offset from the planet
+      const cameraOffset = new THREE.Vector3(radius * 5, radius * 2, radius * 5)
+      const cameraPosition = position.clone().add(cameraOffset)
+      
+      // Animate camera movement
+      const duration = 1000; // 1 second
+      const startPosition = camera.position.clone();
+      const startRotation = camera.quaternion.clone();
+      const endRotation = new THREE.Quaternion().setFromRotationMatrix(
+        new THREE.Matrix4().lookAt(cameraPosition, position, new THREE.Vector3(0, 1, 0))
+      );
+
+      const animateCamera = (time: number) => {
+        const alpha = Math.min(time / duration, 1);
+        camera.position.lerpVectors(startPosition, cameraPosition, alpha);
+        camera.quaternion.slerpQuaternions(startRotation, endRotation, alpha);
+        
+        if (alpha < 1) {
+          requestAnimationFrame(animateCamera);
+        } else {
+          onFocus(name, description, planetRef.current!);
+        }
+      };
+
+      requestAnimationFrame(animateCamera);
     }
   }
 
