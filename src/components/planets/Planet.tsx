@@ -14,9 +14,11 @@ export interface PlanetProps {
   speed: number
   description: string
   onFocus: (name: string, description: string) => void
+  semiMajorAxis: number;
+  eccentricity: number;
 }
 
-const Planet = ({ name, radius, orbitRadius, rotationSpeed, orbitSpeed, textureMap, isDynamic, speed, description, onFocus }: PlanetProps) => {
+const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbitSpeed, orbitRadius, textureMap, isDynamic, speed, description, onFocus }: PlanetProps) => {
   const planetRef = useRef<THREE.Mesh>(null)
   const texture = useLoader(THREE.TextureLoader, textureMap)
   const [hovered, setHovered] = useState(false)
@@ -27,11 +29,19 @@ const Planet = ({ name, radius, orbitRadius, rotationSpeed, orbitSpeed, textureM
       // Rotate around its own axis
       planetRef.current.rotation.y += rotationSpeed * delta * speed
 
-      // Orbit around the sun
+      // Calculate position on elliptical orbit
       const angle = planetRef.current.userData.angle + orbitSpeed * delta * speed
-      planetRef.current.position.x = Math.cos(angle) * orbitRadius
-      planetRef.current.position.z = Math.sin(angle) * orbitRadius
+      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(angle))
+      
+      // Calculate orbital velocity based on distance from Sun
+      const orbitalVelocity = Math.sqrt((1 + eccentricity * Math.cos(angle)) / (1 - eccentricity * Math.cos(angle)))
+
+      planetRef.current.position.x = r * Math.cos(angle)
+      planetRef.current.position.z = r * Math.sin(angle)
       planetRef.current.userData.angle = angle
+
+      // Apply orbital velocity to the angle change
+      planetRef.current.userData.angle += orbitalVelocity * orbitSpeed * delta * speed
     }
   })
 

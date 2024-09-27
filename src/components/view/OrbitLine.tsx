@@ -2,14 +2,18 @@ import * as THREE from 'three'
 import { Line } from '@react-three/drei'
 
 interface OrbitLineProps {
-  radius: number
+  semiMajorAxis: number
+  eccentricity: number
 }
 
-const OrbitLine = ({ radius }: OrbitLineProps) => {
+const OrbitLine = ({ semiMajorAxis, eccentricity }: OrbitLineProps) => {
   const points = []
-  for (let i = 0; i <= 64; i++) {
-    const angle = (i / 64) * Math.PI * 2
-    points.push(new THREE.Vector3(Math.cos(angle) * radius, 0, Math.sin(angle) * radius))
+  const segments = 64
+
+  for (let i = 0; i <= segments; i++) {
+    const angle = (i / segments) * Math.PI * 2
+    const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(angle))
+    points.push(new THREE.Vector3(r * Math.cos(angle), 0, r * Math.sin(angle)))
   }
 
   return (

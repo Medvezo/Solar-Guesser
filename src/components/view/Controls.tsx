@@ -19,11 +19,11 @@ const Controls: React.FC<ControlsProps> = ({ isDynamic, setIsDynamic, speed, set
       <input
         type="range"
         min="0.1"
-        max="5"
+        max="20"
         step="0.1"
         value={speed}
         onChange={(e) => setSpeed(parseFloat(e.target.value))}
-        className="w-24"
+        className="w-32"
       />
       <span className="text-white">Speed: {speed.toFixed(1)}x</span>
     </div>
