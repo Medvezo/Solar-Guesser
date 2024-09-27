@@ -10,13 +10,22 @@ const AsteroidBelt = () => {
     const outerRadius = 70; // Decreased from Jupiter's orbit
 
     for (let i = 0; i < numAsteroids; i++) {
-      const radius = Math.random() * (outerRadius - innerRadius) + innerRadius;
+      const semiMajorAxis = Math.random() * (outerRadius - innerRadius) + innerRadius;
+      const eccentricity = Math.random() * 0.1; // Low eccentricity for mostly circular orbits
       const angle = Math.random() * Math.PI * 2;
-      const x = Math.cos(angle) * radius;
-      const z = Math.sin(angle) * radius;
+      const perihelion = semiMajorAxis * (1 - eccentricity);
+      const aphelion = semiMajorAxis * (1 + eccentricity);
       const y = (Math.random() - 0.5) * 1; // Further reduced vertical spread
       const size = Math.random() * 0.15 + 0.05; // Slightly smaller asteroid size
-      temp.push({ position: new THREE.Vector3(x, y, z), size, speed: Math.random() * 0.0001 + 0.00005 });
+      temp.push({ 
+        semiMajorAxis,
+        eccentricity,
+        angle,
+        perihelion,
+        aphelion,
+        y,
+        size
+      });
     }
     return temp;
   }, []);
@@ -26,11 +35,28 @@ const AsteroidBelt = () => {
   useFrame((_, delta) => {
     if (asteroidsRef.current) {
       asteroidsRef.current.children.forEach((asteroid, index) => {
-        const { position, speed } = asteroids[index];
-        const angle = Math.atan2(position.z, position.x) + speed * delta;
-        const radius = position.length();
-        asteroid.position.x = Math.cos(angle) * radius;
-        asteroid.position.z = Math.sin(angle) * radius;
+        const { semiMajorAxis, eccentricity, angle, perihelion, aphelion, y } = asteroids[index];
+        
+        // Calculate orbital period (in arbitrary units)
+        const period = Math.sqrt(semiMajorAxis * semiMajorAxis * semiMajorAxis);
+        
+        // Update angle based on orbital period
+        const newAngle = (angle + (2 * Math.PI / period) * delta) % (2 * Math.PI);
+        asteroids[index].angle = newAngle;
+        
+        // Calculate radius using polar equation of an ellipse
+        const radius = (semiMajorAxis * (1 - eccentricity * eccentricity)) / (1 + eccentricity * Math.cos(newAngle));
+        
+        // Calculate new position
+        const x = Math.cos(newAngle) * radius;
+        const z = Math.sin(newAngle) * radius;
+        
+        // Update asteroid position
+        asteroid.position.set(x, y, z);
+        
+        // Calculate and apply scale based on distance (optional, for visual effect)
+        const distanceScale = 1 - (radius - perihelion) / (aphelion - perihelion) * 0.5;
+        asteroid.scale.setScalar(asteroids[index].size * distanceScale);
       });
     }
   });
@@ -38,7 +64,7 @@ const AsteroidBelt = () => {
   return (
     <group ref={asteroidsRef}>
       {asteroids.map((asteroid, i) => (
-        <mesh key={i} position={asteroid.position} scale={asteroid.size}>
+        <mesh key={i} position={[asteroid.perihelion, asteroid.y, 0]} scale={asteroid.size}>
           <dodecahedronGeometry args={[1, 0]} />
           <meshStandardMaterial 
             color="#888888" 
