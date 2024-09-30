@@ -60,8 +60,8 @@ const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbi
       const orbitalVelocity = Math.sqrt(2 / r - 1 / semiMajorAxis)
 
       // Log orbital speed only for Mercury every 2 seconds
-      if (name === 'Mercury' && Date.now() - lastLogTime.current > 2000) {
-        console.log(`Mercury orbital speed: ${orbitalVelocity.toFixed(4)}`)
+      if (Date.now() - lastLogTime.current > 2000) {
+        console.log(`${name} orbital speed:`, orbitalVelocity.toFixed(4))
         lastLogTime.current = Date.now()
       }
 
