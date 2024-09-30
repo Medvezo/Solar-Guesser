@@ -39,17 +39,17 @@ const SunMaterial = shaderMaterial(
   void main() {
     float noiseValue = turbulence(vPosition + time * 0.1);
 
-    vec3 color1 = vec3(1.0, 0.3, 0.0);
-    vec3 color2 = vec3(1.0, 0.6, 0.0);
+    vec3 color1 = vec3(1.0, 0.5, 0.0); // Orange
+    vec3 color2 = vec3(1.0, 0.9, 0.0); // Yellow
     vec3 finalColor = mix(color1, color2, noiseValue);
     
-    float intensity = (noiseValue * 0.5 + 0.5) * emissiveIntensity;
+    float intensity = 1.0 + noiseValue * 0.5;
     
     // Add glow
     float glow = max(0.0, 1.0 - length(vUv - 0.5) * 2.0);
     finalColor += vec3(1.0, 0.6, 0.3) * glow * 0.6;
 
-    gl_FragColor = vec4(finalColor * intensity, 1.0);
+    gl_FragColor = vec4(finalColor * intensity * emissiveIntensity, 1.0);
   }
   `
 )
