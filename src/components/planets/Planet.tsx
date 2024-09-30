@@ -20,30 +20,53 @@ export interface PlanetProps {
   cameraRef: React.RefObject<THREE.PerspectiveCamera>;
 }
 
-const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbitSpeed, orbitRadius, textureMap, isDynamic, speed, description, onFocus, isFocused, cameraRef }: PlanetProps) => {
+const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbitRadius, textureMap, isDynamic, speed, description, onFocus, isFocused, cameraRef }: PlanetProps) => {
   const planetRef = useRef<THREE.Mesh>(null)
   const texture = useLoader(THREE.TextureLoader, textureMap)
   const [hovered, setHovered] = useState(false)
   const { camera } = useThree()
+
+  // Add a ref to store the last logged time
+  const lastLogTime = useRef(0)
 
   useFrame((_, delta) => {
     if (isDynamic && planetRef.current) {
       // Rotate around its own axis
       planetRef.current.rotation.y += rotationSpeed * delta * speed
 
-      // Calculate position on elliptical orbit
-      const angle = planetRef.current.userData.angle + orbitSpeed * delta * speed
-      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(angle))
+      // Calculate orbital period using a simplified version of Kepler's Third Law
+      const orbitalPeriod = Math.sqrt(semiMajorAxis * semiMajorAxis * semiMajorAxis) * 10
+
+      // Calculate current true anomaly (angle from perihelion)
+      const meanAnomaly = (planetRef.current.userData.angle + delta * speed * 2 * Math.PI / orbitalPeriod) % (2 * Math.PI)
       
-      // Calculate orbital velocity based on distance from Sun
-      const orbitalVelocity = Math.sqrt((1 + eccentricity * Math.cos(angle)) / (1 - eccentricity * Math.cos(angle)))
+      // Solve Kepler's equation to get eccentric anomaly (simplified approximation)
+      let E = meanAnomaly
+      for (let i = 0; i < 5; i++) {
+        E = meanAnomaly + eccentricity * Math.sin(E)
+      }
 
-      planetRef.current.position.x = r * Math.cos(angle)
-      planetRef.current.position.z = r * Math.sin(angle)
-      planetRef.current.userData.angle = angle
+      // Calculate true anomaly
+      const trueAnomaly = 2 * Math.atan(Math.sqrt((1 + eccentricity) / (1 - eccentricity)) * Math.tan(E / 2))
 
-      // Apply orbital velocity to the angle change
-      planetRef.current.userData.angle += orbitalVelocity * orbitSpeed * delta * speed
+      // Calculate radius using the polar equation of an ellipse
+      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(trueAnomaly))
+
+      // Calculate new position
+      planetRef.current.position.x = r * Math.cos(trueAnomaly)
+      planetRef.current.position.z = r * Math.sin(trueAnomaly)
+
+      // Calculate orbital velocity
+      const orbitalVelocity = Math.sqrt(2 / r - 1 / semiMajorAxis)
+
+      // Log orbital speed only for Mercury every 2 seconds
+      if (name === 'Mercury' && Date.now() - lastLogTime.current > 2000) {
+        console.log(`Mercury orbital speed: ${orbitalVelocity.toFixed(4)}`)
+        lastLogTime.current = Date.now()
+      }
+
+      // Update angle for next frame
+      planetRef.current.userData.angle = meanAnomaly
 
       // Update camera position if this planet is focused
       if (isFocused && cameraRef.current) {
