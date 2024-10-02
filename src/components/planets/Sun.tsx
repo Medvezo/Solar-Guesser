@@ -77,6 +77,7 @@ const Sun = () => {
     <group>
       <mesh ref={meshRef}>
         <sphereGeometry args={[2, 128, 128]} />
+        {/* @ts-expect-error */}
         <sunMaterial ref={materialRef} />
       </mesh>
       <pointLight ref={lightRef} position={[0, 0, 0]} intensity={50000} color={'rgb(255, 207, 55)'} />
