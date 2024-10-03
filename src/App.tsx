@@ -13,7 +13,7 @@ import PlanetInfo from "./components/view/PlanetInfo";
 import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";
 import Saturn from "./components/planets/Saturn";
-import LayersFilter from "./components/view/LayersFilter";
+import LayersFilter from "./components/ui/LayersFilter";
 
 // TODO: Add texture maps to planets
 const planets = [
