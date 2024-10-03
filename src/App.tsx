@@ -1,6 +1,7 @@
+import React, { useState } from 'react';
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import * as THREE from 'three';
 
 // Components
@@ -11,7 +12,8 @@ import Controls from "./components/view/Controls";
 import PlanetInfo from "./components/view/PlanetInfo";
 import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";
-import Saturn from "./components/planets/Saturn"; // Import Saturn component
+import Saturn from "./components/planets/Saturn";
+import LayersFilter from "./components/view/LayersFilter";
 
 // TODO: Add texture maps to planets
 const planets = [
@@ -32,6 +34,22 @@ function App() {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const controlsRef = useRef<any>(null);
 	const cameraRef = useRef<THREE.PerspectiveCamera>(null);
+
+	const [visibleLayers, setVisibleLayers] = useState({
+		Planets: true,
+		Asteroids: false,
+		Comets: false,
+		Spacecrafts: false,
+		'User Interface': true,
+		Labels: true,
+		Icons: true,
+		Orbits: true,
+		Trails: false,
+	});
+
+	const handleLayerToggle = (layer: string, isVisible: boolean) => {
+		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
+	};
 
 	const handlePlanetFocus = (name: string) => {
 		const planet = planets.find(p => p.name === name);
@@ -59,8 +77,8 @@ function App() {
 				<Stars radius={500} depth={60} count={20000} factor={7} saturation={0} fade />
 
 				<Sun />
-				<AsteroidBelt />
-				{planets.map((planet) => 
+				{visibleLayers.Asteroids && <AsteroidBelt />}
+				{visibleLayers.Planets && planets.map((planet) => 
 					planet.component ? (
 						<planet.component
 							key={planet.name}
@@ -86,17 +104,22 @@ function App() {
 						/>
 					)
 				)}
-				{planets.map((planet) => (
+				{visibleLayers.Orbits && planets.map((planet) => (
 					<OrbitLine key={planet.name} semiMajorAxis={planet.semiMajorAxis} eccentricity={planet.eccentricity} />
 				))}
 			</Canvas>
-			<Controls
-				isDynamic={isDynamic}
-				setIsDynamic={setIsDynamic}
-				speed={speed}
-				setSpeed={setSpeed}
-			/>
-			{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
+			{visibleLayers['User Interface'] && (
+				<>
+					<Controls
+						isDynamic={isDynamic}
+						setIsDynamic={setIsDynamic}
+						speed={speed}
+						setSpeed={setSpeed}
+					/>
+					{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
+					<LayersFilter onLayerToggle={handleLayerToggle} />
+				</>
+			)}
 		</>
 	);
 }

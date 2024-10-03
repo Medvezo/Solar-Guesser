@@ -26,3 +26,23 @@ body, html, #root {
   overflow: hidden;
 }
 
+.reverse-checkbox {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Add this to your existing CSS */
+.custom-checkbox [data-selected="true"]::before {
+  content: "✓";
+  position: absolute;
+  right: 0.5rem;
+  color: #3CADD5;
+}
+
+.custom-checkbox [data-selected="true"] {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
