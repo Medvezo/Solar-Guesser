@@ -6,8 +6,6 @@ interface LayersFilterProps {
 }
 
 const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
-	
-
 	const handlePrimaryChange = (values: string[]) => {
 		primaryLayers.forEach((layer) => {
 			onLayerToggle(layer.name, values.includes(layer.name));
@@ -22,9 +20,26 @@ const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
 
 	return (
 		<div className="absolute top-1/2 left-12 transform -translate-y-1/2 bg-black bg-opacity-75 text-white p-4 rounded-lg w-64">
-			<div className="flex justify-between items-center mb-4">
-				<h2 className="text-lg font-bold">Layers</h2>
-				<span className="text-xl cursor-pointer">←</span>
+			<div className="flex justify-between items-center mb-6">
+				<h2 className="text-xl">Layers</h2>
+				<span className="text-xl cursor-pointer">
+					<svg
+						width="20"
+						height="20"
+						viewBox="0 0 20 20"
+						fill="none"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M12.5 16.6L7.0667 11.1667C6.42503 10.525 6.42503 9.47499 7.0667 8.83333L12.5 3.39999"
+							stroke="white"
+							stroke-width="1.5"
+							stroke-miterlimit="10"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</span>
 			</div>
 			<CheckboxGroup
 				defaultValue={["Planets"]}
@@ -36,22 +51,23 @@ const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
 						value={layer.name}
 						className="custom-checkbox reverse-checkbox"
 						classNames={{
-							base: "w-full max-w-full bg-transparent pointer-events-none items-center justify-between cursor-pointer rounded-lg gap-2 p-2",
+							base: "w-full max-w-full items-center justify-between cursor-pointer rounded-lg gap-2 p-2",
 							label: "w-full text-white",
-							wrapper: "pointer-events-auto",
+							wrapper: "pointer-events-auto mr-0 before:border-[#3CADD5C2] before:w-5 before:h-5 after:bg-transparent group-data-[hover=true]:before:bg-transparent",
+							icon: "text-[#3CADD5C2] w-3 h-3",
 						}}
 					>
 						<div className="flex items-center gap-2">
 							{layer.icon && (
 								<span className="text-xl text-yellow-400">{layer.icon}</span>
 							)}
-							<span>{layer.name}</span>
+							<span className="text-sm">{layer.name}</span>
 						</div>
 					</Checkbox>
 				))}
 			</CheckboxGroup>
 
-			<div className="mt-4 border-t border-gray-600 pt-4">
+			<div className="mt-4 border-t border-[#3CADD5C2] pt-4 ">
 				<CheckboxGroup
 					defaultValue={["User Interface", "Labels", "Icons", "Orbits"]}
 					onValueChange={handleSecondaryChange}
@@ -62,12 +78,13 @@ const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
 							value={layer.name}
 							className="custom-checkbox reverse-checkbox"
 							classNames={{
-								base: "w-full max-w-full bg-transparent pointer-events-none items-center justify-between cursor-pointer rounded-lg gap-2 p-2",
+								base: "w-full max-w-full items-center justify-between cursor-pointer rounded-lg gap-2 p-2",
 								label: "w-full text-white",
-								wrapper: "pointer-events-auto",
+								wrapper: "pointer-events-auto mr-0 before:border-[#3CADD5C2] before:w-5 before:h-5 after:bg-transparent group-data-[hover=true]:before:bg-transparent",
+								icon: "text-[#3CADD5C2] w-3 h-3",
 							}}
 						>
-							<span>{layer.name}</span>
+							<span className="text-sm">{layer.name}</span>
 						</Checkbox>
 					))}
 				</CheckboxGroup>
