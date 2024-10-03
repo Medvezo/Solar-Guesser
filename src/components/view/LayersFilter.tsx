@@ -1,25 +1,12 @@
 import React from "react";
 import { Checkbox, CheckboxGroup } from "@nextui-org/react";
-
+import { primaryLayers, secondaryLayers } from "@/lib/const";
 interface LayersFilterProps {
 	onLayerToggle: (layer: string, isVisible: boolean) => void;
 }
 
 const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
-	const primaryLayers = [
-		{ name: "Planets", icon: "○" },
-		{ name: "Asteroids", icon: "△" },
-		{ name: "Comets", icon: "□" },
-		{ name: "Spacecrafts", icon: "⬟" },
-	];
-
-	const secondaryLayers = [
-		{ name: "User Interface", icon: null },
-		{ name: "Labels", icon: null },
-		{ name: "Icons", icon: null },
-		{ name: "Orbits", icon: null },
-		{ name: "Trails", icon: null },
-	];
+	
 
 	const handlePrimaryChange = (values: string[]) => {
 		primaryLayers.forEach((layer) => {
