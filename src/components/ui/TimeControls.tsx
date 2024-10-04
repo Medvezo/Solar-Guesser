@@ -15,6 +15,7 @@ interface TimeControlsProps {
 const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 	const [currentDateTime, setCurrentDateTime] = useState(new Date());
 	const [showCalendar, setShowCalendar] = useState(false);
+	const [sliderValue, setSliderValue] = useState(0);
 
 	useEffect(() => {
 		const timer = setInterval(() => {
@@ -28,6 +29,12 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 		const middleIndex = Math.floor(timeSpeedOptions.length / 2);
 		const speedOption = timeSpeedOptions[value + middleIndex];
 		setSpeed(speedOption ? speedOption.value : 1);
+	};
+
+	const resetSpeed = () => {
+		setSpeed(1); // Reset to real-time speed (1x)
+		// Reset the slider to the middle position
+		setSliderValue(0); // Assuming you add this state
 	};
 
 	const handleDateChange = (newDate: CalendarDate) => {
@@ -44,10 +51,13 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 	};
 
 	return (
-		<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col gap-4  p-4 rounded-full">
-			<section className="flex items-center gap-4">
-				<div className="flex flex-col items-center">
-					<Button onClick={() => setShowCalendar(!showCalendar)}>
+		<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col gap-7  p-4 rounded-full min-w-[43vw]">
+			<section className="flex items-center justify-center gap-8">
+				<div className="flex flex-col items-center justify-center">
+					<Button
+						className="w-[200px] text-[#888888] bg-transparent border border-[#1D1D1D] text-xl"
+						onClick={() => setShowCalendar(!showCalendar)}
+					>
 						{format(currentDateTime, "d MMM, yyyy")}
 					</Button>
 					{showCalendar && (
@@ -66,11 +76,17 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 					)}
 				</div>
 
-				<div className="text-white min-w-[100px] text-center">
+				<div
+					className="text-white min-w-[100px] text-center text-2xl uppercase cursor-pointer"
+					onClick={resetSpeed}
+				>
 					{speed < 0 ? "-" : ""}
-					{timeSpeedOptions.find((option) => option.value === Math.abs(speed))?.label || "Real Rate"}
+					{timeSpeedOptions.find((option) => option.value === Math.abs(speed))
+						?.label || "Real Rate"}
 				</div>
-				<div className="text-white">{format(currentDateTime, "p")}</div>
+				<Button className="text-[#888888] w-[200px] bg-transparent border border-[#1D1D1D] text-xl">
+					{format(currentDateTime, "p")}
+				</Button>
 			</section>
 
 			<Slider
@@ -78,17 +94,28 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 				maxValue={Math.floor(timeSpeedOptions.length / 2)}
 				minValue={-Math.floor(timeSpeedOptions.length / 2)}
 				defaultValue={0}
-				className="max-w-md"
-				onChange={(value) => handleSpeedChange(value as number)}
+				size="sm"
+				value={sliderValue}
+				onChange={(value) => {
+					setSliderValue(value as number);
+					handleSpeedChange(value as number);
+				}}
+				classNames={{
+					base: "",
+					track:
+						"bg-gradient-to-r border-s-transparent from-[#3CADD530] from-0% via-[#3CADD5] via-50% to-[#3CADD530] to-100% shadow-[0px_0px_20.3px_0px_#3CADD5]",
+					filler: "bg-transparent",
+					thumb: "bg-[#3CADD5]",
+				}}
 				renderThumb={(props) => (
 					<div
 						{...props}
 						className="group p-1 top-1/2 rounded-full cursor-grab data-[dragging=true]:cursor-grabbing"
 					>
-						<span className="transition-transform bg-black  shadow-small  rounded-full w-5 h-5 block group-data-[dragging=true]:scale-80">
+						<span className="transition-transform  shadow-small  rounded-full w-10 h-10 block group-data-[dragging=true]:scale-80">
 							<svg
-								width="24"
-								height="24"
+								width="40"
+								height="40"
 								viewBox="0 0 41 41"
 								fill="none"
 								xmlns="http://www.w3.org/2000/svg"

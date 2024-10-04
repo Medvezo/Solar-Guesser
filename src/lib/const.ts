@@ -54,7 +54,6 @@ export const timeSpeedOptions = [
     { value: -10, label: "-10 secs/s" },
     { value: -5, label: "-5 secs/s" },
     { value: -3, label: "-3 secs/s" },
-    { value: -1, label: "-Real Rate" },
     { value: 1, label: "Real Rate" },
     { value: 3, label: "3 secs/s" },
     { value: 5, label: "5 secs/s" },
