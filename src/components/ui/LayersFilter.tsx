@@ -4,9 +4,10 @@ import { primaryLayers, secondaryLayers } from "@/lib/const";
 
 interface LayersFilterProps {
   onLayerToggle: (layer: string, isVisible: boolean) => void;
+  isPlanetFocused: boolean;
 }
 
-const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
+const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle, isPlanetFocused }) => {
   const handlePrimaryChange = (values: string[]) => {
     primaryLayers.forEach((layer) => {
       onLayerToggle(layer.name, values.includes(layer.name));
@@ -21,7 +22,7 @@ const LayersFilter: React.FC<LayersFilterProps> = ({ onLayerToggle }) => {
 
 
   return (
-    <div className="absolute top-1/2 left-12 transform -translate-y-1/2 bg-black bg-opacity-75 text-white p-4 rounded-lg w-64">
+    <div className={`absolute top-1/2 left-12 transform -translate-y-1/2 ${isPlanetFocused ? 'bg-black bg-opacity-75' : 'bg-[#3CADD526]'} text-white p-4 rounded-lg w-64 transition-all duration-300 ease-in-out`}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl">Layers</h2>
         <span className="text-xl cursor-pointer">

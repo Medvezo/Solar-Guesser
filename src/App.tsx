@@ -117,7 +117,7 @@ function App() {
 						setSpeed={setSpeed}
 					/>
 					{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
-					<LayersFilter onLayerToggle={handleLayerToggle} />
+					<LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedPlanet !== null} />
 				</>
 			)}
 		</>
