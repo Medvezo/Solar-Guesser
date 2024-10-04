@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useRef } from 'react'
 import { useFrame, extend } from '@react-three/fiber'
 import { shaderMaterial } from '@react-three/drei'
@@ -69,7 +70,8 @@ const Sun = () => {
       meshRef.current.rotation.y += 0.001
     }
     if (lightRef.current) {
-      lightRef.current.intensity = 50000 + Math.sin(clock.elapsedTime * 0.5) * 5000
+      // Further reduce base intensity and fluctuation
+      lightRef.current.intensity = 15000 + Math.sin(clock.elapsedTime * 0.5) * 1000
     }
   })
 
@@ -80,7 +82,14 @@ const Sun = () => {
         {/* @ts-expect-error */}
         <sunMaterial ref={materialRef} />
       </mesh>
-      <pointLight ref={lightRef} position={[0, 0, 0]} intensity={50000} color={'rgb(255, 207, 55)'} />
+      <pointLight 
+        ref={lightRef} 
+        position={[0, 0, 0]} 
+        intensity={1500} 
+        color={'rgba(100, 100, 100)'} // White color with 50% opacity
+        distance={15000} // Increase distance for light falloff
+        decay={1.5} // Slightly increase decay for faster falloff
+      />
     </group>
   )
 }

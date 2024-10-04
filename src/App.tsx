@@ -95,7 +95,7 @@ function App() {
 			<Canvas style={{ height: "100vh" }}>
 				<PerspectiveCamera ref={cameraRef} makeDefault position={[0, 30, 50]} fov={75} />
 				<OrbitControls ref={controlsRef} />
-				<ambientLight intensity={0.1} />
+				<ambientLight intensity={0.5} />
 				<Stars radius={500} depth={60} count={20000} factor={7} saturation={0} fade />
 
 				<Sun />
