@@ -14,6 +14,7 @@ import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";
 import Saturn from "./components/planets/Saturn";
 import LayersFilter from "./components/ui/LayersFilter";
+import Header from './components/ui/Header';
 
 // TODO: Add texture maps to planets
 const planets = [
@@ -70,6 +71,7 @@ function App() {
 
 	return (
 		<>
+			<Header />
 			<Canvas style={{ height: "100vh" }}>
 				<PerspectiveCamera ref={cameraRef} makeDefault position={[0, 30, 50]} fov={75} />
 				<OrbitControls ref={controlsRef} />
