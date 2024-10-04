@@ -30,7 +30,7 @@ const LayersFilter: React.FC<LayersFilterProps> = ({
 		<motion.div
 			className={`absolute top-1/2 left-12 transform -translate-y-1/2 ${
 				isPlanetFocused ? "bg-black bg-opacity-75" : "bg-[#3CADD526]"
-			} text-white rounded-lg overflow-hidden`}
+			} text-white rounded-lg overflow-hidden transition-colors duration-300 ease-in-out`}
 			initial={{ width: 256, height: "auto" }}
 			animate={{
 				width: isExpanded ? 256 : 48,
