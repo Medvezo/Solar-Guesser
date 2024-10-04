@@ -9,7 +9,7 @@ import ZoomControls from './components/ui/ZoomControls';
 import Planet from "./components/planets/Planet";
 import Sun from "./components/planets/Sun";
 import OrbitLine from "./components/view/OrbitLine";
-import Controls from "./components/ui/Controls";
+import Controls from "./components/ui/TimeControls";
 import PlanetInfo from "./components/ui/PlanetInfo";
 import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";

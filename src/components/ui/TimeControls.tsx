@@ -1,13 +1,13 @@
 import React from 'react'
 
-interface ControlsProps {
+interface TimeControlsProps {
   isDynamic: boolean
   setIsDynamic: (value: boolean) => void
   speed: number
   setSpeed: (value: number) => void
 }
 
-const Controls: React.FC<ControlsProps> = ({ isDynamic, setIsDynamic, speed, setSpeed }) => {
+const TimeControls: React.FC<TimeControlsProps> = ({ isDynamic, setIsDynamic, speed, setSpeed }) => {
   return (
     <div className="absolute bottom-5 left-5 flex items-center gap-2.5 bg-black bg-opacity-50 p-2.5 rounded">
       <button
@@ -30,4 +30,4 @@ const Controls: React.FC<ControlsProps> = ({ isDynamic, setIsDynamic, speed, set
   )
 }
 
-export default Controls
+export default TimeControls
