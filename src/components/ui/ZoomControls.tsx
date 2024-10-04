@@ -33,7 +33,7 @@ const Button: React.FC<{ onClick: () => void; icon: React.ReactNode, isReset?: b
 	isReset = false,
 }) => (
 	<button
-		className={`w-6 h-6 m-2 p-0.5 flex items-center justify-center rounded-md text-blue-400 hover:text-white hover:bg-sky-800 transition-colors ${isReset ? '' : 'border-1.5 border-[#3CADD5]'} `}
+		className={`w-6 h-6 m-2 p-0.5 flex items-center justify-center rounded-md text-blue-400 hover:text-white hover:bg-sky-800 transition-colors ${isReset ? '' : 'border-2 border-[#3CADD5]'} `}
 		onClick={onClick}
 	>
 		{icon}
