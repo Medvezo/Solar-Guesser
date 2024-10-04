@@ -119,7 +119,7 @@ function App() {
 							{...planet} 
 							orbitRadius={planet.semiMajorAxis} 
 							isDynamic={isDynamic} 
-							speed={speed} 
+							speed={speed}
 							onFocus={handlePlanetFocus} 
 							isFocused={focusedPlanet?.name === planet.name}
 							cameraRef={cameraRef}
