@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Slider, Button } from "@nextui-org/react";
 import { Calendar } from "@nextui-org/react";
-import { format } from "date-fns";
+import { format, addSeconds } from "date-fns";
 import { timeSpeedOptions } from "@/lib/const";
+import { CalendarDate } from "@internationalized/date";
 
 interface TimeControlsProps {
 	isDynamic: boolean;
@@ -11,14 +12,17 @@ interface TimeControlsProps {
 	setSpeed: (value: number) => void;
 }
 
-const TimeControls: React.FC<TimeControlsProps> = ({
-	isDynamic,
-	setIsDynamic,
-	speed,
-	setSpeed,
-}) => {
-	const [date, setDate] = useState(new Date());
+const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
+	const [currentDateTime, setCurrentDateTime] = useState(new Date());
 	const [showCalendar, setShowCalendar] = useState(false);
+
+	useEffect(() => {
+		const timer = setInterval(() => {
+			setCurrentDateTime((prevDateTime) => addSeconds(prevDateTime, speed));
+		}, 1000);
+
+		return () => clearInterval(timer);
+	}, [speed]);
 
 	const handleSpeedChange = (value: number) => {
 		const speedOption = timeSpeedOptions.find(
@@ -27,27 +31,34 @@ const TimeControls: React.FC<TimeControlsProps> = ({
 		setSpeed(speedOption ? speedOption.value : 1);
 	};
 
+	const handleDateChange = (newDate: CalendarDate) => {
+		const newDateTime = new Date(
+			newDate.year,
+			newDate.month - 1,
+			newDate.day,
+			currentDateTime.getHours(),
+			currentDateTime.getMinutes(),
+			currentDateTime.getSeconds()
+		);
+		setCurrentDateTime(newDateTime);
+		setShowCalendar(false);
+	};
+
 	return (
 		<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex items-center gap-4 bg-black bg-opacity-50 p-4 rounded-full">
-			<Button
-				auto
-				color={isDynamic ? "success" : "error"}
-				onClick={() => setIsDynamic(!isDynamic)}
-			>
-				{isDynamic ? "Pause" : "Start"}
-			</Button>
 			<div className="flex flex-col items-center">
-				<Button auto flat onClick={() => setShowCalendar(!showCalendar)}>
-					{format(date, "d MMM, yyyy")}
+				<Button onClick={() => setShowCalendar(!showCalendar)}>
+					{format(currentDateTime, "d MMM, yyyy")}
 				</Button>
 				{showCalendar && (
 					<div className="absolute bottom-full mb-2">
 						<Calendar
-							value={date}
-							onChange={(newDate) => {
-								setDate(newDate);
-								setShowCalendar(false);
-							}}
+							value={new CalendarDate(
+								currentDateTime.getFullYear(),
+								currentDateTime.getMonth() + 1,
+								currentDateTime.getDate()
+							)}
+							onChange={handleDateChange}
 						/>
 					</div>
 				)}
@@ -70,7 +81,7 @@ const TimeControls: React.FC<TimeControlsProps> = ({
 				{timeSpeedOptions.find((option) => option.value === speed)?.label ||
 					"Real Rate"}
 			</div>
-			<div className="text-white">{format(date, "p")}</div>
+			<div className="text-white">{format(currentDateTime, "p")}</div>
 		</div>
 	);
 };
