@@ -3,6 +3,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
 import { useRef } from "react";
 import * as THREE from 'three';
+import ZoomControls from './components/ui/ZoomControls';
 
 // Components
 import Planet from "./components/planets/Planet";
@@ -69,6 +70,25 @@ function App() {
 		}
 	};
 
+	const handleZoomIn = () => {
+		if (cameraRef.current) {
+			cameraRef.current.position.multiplyScalar(0.9);
+		}
+	};
+
+	const handleZoomOut = () => {
+		if (cameraRef.current) {
+			cameraRef.current.position.multiplyScalar(1.1);
+		}
+	};
+
+	const handleResetZoom = () => {
+		if (cameraRef.current) {
+			cameraRef.current.position.set(0, 30, 50);
+			cameraRef.current.lookAt(0, 0, 0);
+		}
+	};
+
 	return (
 		<>
 			<Header />
@@ -120,6 +140,11 @@ function App() {
 					/>
 					{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
 					<LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedPlanet !== null} />
+					<ZoomControls
+						onZoomIn={handleZoomIn}
+						onZoomOut={handleZoomOut}
+						onReset={handleResetZoom}
+					/>
 				</>
 			)}
 		</>
