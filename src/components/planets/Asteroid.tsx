@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -11,6 +12,7 @@ interface AsteroidProps {
   speed?: number;
   semiMajorAxis: number;
   eccentricity: number;
+  orbitAngle: number; // Add this prop
   onFocus: (name: string, description: string, ref: THREE.Mesh) => void;
   isFocused: boolean;
   cameraRef: React.RefObject<THREE.PerspectiveCamera>;
@@ -24,6 +26,7 @@ const Asteroid: React.FC<AsteroidProps> = ({
   speed = 1, 
   semiMajorAxis, 
   eccentricity, 
+  orbitAngle, // Use this prop instead of generating it inside the component
   onFocus,
   isFocused,
   cameraRef
@@ -31,9 +34,6 @@ const Asteroid: React.FC<AsteroidProps> = ({
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
-
-  // Set initial orbit angle
-  const orbitAngle = useMemo(() => Math.random() * Math.PI * 0.2, []); // Random angle up to 36 degrees
 
   useEffect(() => {
     if (meshRef.current) {
@@ -149,23 +149,22 @@ const Asteroid: React.FC<AsteroidProps> = ({
     }
   };
 
-  // Generate orbit line points with angle
-  const orbitPoints = useMemo(() => {
-    const points = [];
-    const segments = 64;
-    const angle = Math.random() * Math.PI * 0.2; // Random angle up to 36 degrees
-    const rotationMatrix = new THREE.Matrix4().makeRotationX(angle);
+  // Update the orbitPoints useMemo to use the orbitAngle prop
+//   const orbitPoints = useMemo(() => {
+//     const points = [];
+//     const segments = 64;
+//     const rotationMatrix = new THREE.Matrix4().makeRotationX(orbitAngle);
 
-    for (let i = 0; i <= segments; i++) {
-      const t = (i / segments) * Math.PI * 2;
-      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(t));
-      const x = r * Math.cos(t);
-      const z = r * Math.sin(t);
-      const point = new THREE.Vector3(x, 0, z).applyMatrix4(rotationMatrix);
-      points.push(point);
-    }
-    return points;
-  }, [semiMajorAxis, eccentricity]);
+//     for (let i = 0; i <= segments; i++) {
+//       const t = (i / segments) * Math.PI * 2;
+//       const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(t));
+//       const x = r * Math.cos(t);
+//       const z = r * Math.sin(t);
+//       const point = new THREE.Vector3(x, 0, z).applyMatrix4(rotationMatrix);
+//       points.push(point);
+//     }
+//     return points;
+//   }, [semiMajorAxis, eccentricity, orbitAngle]);
 
   const prevPosition = useRef(new THREE.Vector3());
   const velocity = useRef(new THREE.Vector3());

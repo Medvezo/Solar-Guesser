@@ -5,14 +5,14 @@ interface PlanetInfoProps {
 	planet: {
 		name: string;
 		description: string;
-		type: string;
-		moons: string;
-		gravity: string;
-		dayLength: string;
-		radiusInKm: string;
-		orbitalPeriod: string;
-		distanceFromSun: string;
-		coordinates: string;
+		type?: string;
+		moons?: string;
+		gravity?: string;
+		dayLength?: string;
+		radiusInKm?: string;
+		orbitalPeriod?: string;
+		distanceFromSun?: string;
+		coordinates?: string;
 	};
 	onClose: () => void;
 }
@@ -29,19 +29,21 @@ const PlanetInfo: React.FC<PlanetInfoProps> = ({ planet, onClose }) => {
 			>
 				<h2 className="text-4xl font-bold mb-4 my-1 text-white">{planet.name}</h2>
 
-				<p className="text-[#716B6B] uppercase mb-1">{planet.type}</p>
-				<p className="mb-6 ">{planet.description}</p>
+				{planet.type && <p className="text-[#716B6B] uppercase mb-1">{planet.type}</p>}
+				<p className="mb-6">{planet.description}</p>
 				
-				<div className="space-y-2">
-					<h3 className="text-xl text-[#3CADD5] mb-2">Info</h3>
-					<InfoItem label="Moons" value={planet.moons} />
-					<InfoItem label="Gravity" value={planet.gravity} />
-					<InfoItem label="Length of the day" value={planet.dayLength} />
-					<InfoItem label="Radius" value={planet.radiusInKm} />
-					<InfoItem label="Orbital period" value={planet.orbitalPeriod} />
-					<InfoItem label="Distance from Sun" value={planet.distanceFromSun} />
-					<InfoItem label="Coordinates" value={planet.coordinates} />
-				</div>
+				{(planet.moons || planet.gravity || planet.dayLength || planet.radiusInKm || planet.orbitalPeriod || planet.distanceFromSun || planet.coordinates) && (
+					<div className="space-y-2">
+						<h3 className="text-xl text-[#3CADD5] mb-2">Info</h3>
+						{planet.moons && <InfoItem label="Moons" value={planet.moons} />}
+						{planet.gravity && <InfoItem label="Gravity" value={planet.gravity} />}
+						{planet.dayLength && <InfoItem label="Length of the day" value={planet.dayLength} />}
+						{planet.radiusInKm && <InfoItem label="Radius" value={planet.radiusInKm} />}
+						{planet.orbitalPeriod && <InfoItem label="Orbital period" value={planet.orbitalPeriod} />}
+						{planet.distanceFromSun && <InfoItem label="Distance from Sun" value={planet.distanceFromSun} />}
+						{planet.coordinates && <InfoItem label="Coordinates" value={planet.coordinates} />}
+					</div>
+				)}
 				<button
 					onClick={onClose}
 					className="absolute top-4 right-4 text-gray-400 hover:text-white"

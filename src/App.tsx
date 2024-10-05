@@ -1,6 +1,6 @@
-import { useState, useRef, useMemo } from 'react';
+import { useState, useRef } from 'react';
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Stars, Line } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
 import * as THREE from 'three';
 import ZoomControls from './components/ui/ZoomControls';
 import Asteroid from "./components/planets/Asteroid";
@@ -12,7 +12,6 @@ import OrbitLine from "./components/view/OrbitLine";
 import Controls from "./components/ui/TimeControls";
 
 import PlanetInfo from "./components/ui/PlanetInfo";
-import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";
 import Saturn from "./components/planets/Saturn";
 import LayersFilter from "./components/ui/LayersFilter";
@@ -45,7 +44,7 @@ const orbitColors = [
 function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
 	const [speed, setSpeed] = useState(1);
-	const [focusedPlanet, setFocusedPlanet] = useState<typeof planets[0] | null>(null);
+	// const [focusedPlanet, setFocusedPlanet] = useState<typeof planets[0] | null>(null);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const controlsRef = useRef<any>(null);
 	const cameraRef = useRef<THREE.PerspectiveCamera>(null);
@@ -68,22 +67,22 @@ function App() {
 		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
 	};
 
-	const handlePlanetFocus = (name: string) => {
-		const planet = planets.find(p => p.name === name);
-		if (planet) {
-			setFocusedPlanet(planet);
-			if (controlsRef.current) {
-				controlsRef.current.enabled = false;
-			}
-		}
-	};
+	// const handlePlanetFocus = (name: string) => {
+	// 	const planet = planets.find(p => p.name === name);
+	// 	if (planet) {
+	// 		setFocusedPlanet(planet);
+	// 		if (controlsRef.current) {
+	// 			controlsRef.current.enabled = false;
+	// 		}
+	// 	}
+	// };
 
-	const handleClosePlanetInfo = () => {
-		setFocusedPlanet(null);
-		if (controlsRef.current) {
-			controlsRef.current.enabled = true;
-		}
-	};
+	// const handleClosePlanetInfo = () => {
+	// 	setFocusedPlanet(null);
+	// 	if (controlsRef.current) {
+	// 		controlsRef.current.enabled = true;
+	// 	}
+	// };
 
 	const handleZoomIn = () => {
 		if (cameraRef.current) {
@@ -104,7 +103,7 @@ function App() {
 		}
 	};
 
-	const handleObjectFocus = (name: string, description: string, ref: THREE.Mesh) => {
+	const handleObjectFocus = (name: string, description: string) => {
 		setFocusedObject({ name, description });
 		if (controlsRef.current) {
 			controlsRef.current.enabled = false;
