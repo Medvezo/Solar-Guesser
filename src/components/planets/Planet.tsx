@@ -30,36 +30,58 @@ const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbi
   const lastLogTime = useRef(0)
 
   useFrame((_, delta) => {
-    if (isDynamic && planetRef.current) {
-      // Rotate around its own axis
+    if (planetRef.current) {
+      // Always rotate the planet, regardless of focus state
       planetRef.current.rotation.y += rotationSpeed * delta * speed
 
-      // Use orbitSpeed to calculate the change in angle
-      const angleChange = orbitSpeed * delta * speed
+      if (isDynamic) {
+        // Rotate around its own axis
+        planetRef.current.rotation.y += rotationSpeed * delta * speed
 
-      // Update the current angle
-      planetRef.current.userData.angle = (planetRef.current.userData.angle + angleChange) % (2 * Math.PI)
+        // Use orbitSpeed to calculate the change in angle
+        const angleChange = orbitSpeed * delta * speed
 
-      // Calculate new position using the updated angle
-      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(planetRef.current.userData.angle))
-      planetRef.current.position.x = r * Math.cos(planetRef.current.userData.angle)
-      planetRef.current.position.z = r * Math.sin(planetRef.current.userData.angle)
+        // Update the current angle
+        planetRef.current.userData.angle = (planetRef.current.userData.angle + angleChange) % (2 * Math.PI)
 
-      // Calculate orbital velocity (you may want to adjust this calculation)
-      const orbitalVelocity = orbitSpeed * semiMajorAxis
+        // Calculate new position using the updated angle
+        const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(planetRef.current.userData.angle))
+        planetRef.current.position.x = r * Math.cos(planetRef.current.userData.angle)
+        planetRef.current.position.z = r * Math.sin(planetRef.current.userData.angle)
 
-      // Log orbital speed only for Mercury every 2 seconds
-      if (Date.now() - lastLogTime.current > 2000) {
-        console.log(`${name} orbital speed:`, orbitalVelocity.toFixed(4))
-        lastLogTime.current = Date.now()
-      }
+        // Calculate orbital velocity (you may want to adjust this calculation)
+        const orbitalVelocity = orbitSpeed * semiMajorAxis
 
-      // Update camera position if this planet is focused
-      if (isFocused && cameraRef.current) {
-        const cameraOffset = new THREE.Vector3(radius * 5, radius * 2, radius * 5)
-        const newCameraPosition = planetRef.current.position.clone().add(cameraOffset)
-        cameraRef.current.position.copy(newCameraPosition)
-        cameraRef.current.lookAt(planetRef.current.position)
+        // Log orbital speed only for Mercury every 2 seconds
+        if (Date.now() - lastLogTime.current > 2000) {
+          console.log(`${name} orbital speed:`, orbitalVelocity.toFixed(4))
+          lastLogTime.current = Date.now()
+        }
+
+        // Update camera position if this planet is focused
+        if (isFocused && cameraRef.current) {
+          // Calculate the direction from the Sun to the planet
+          const sunToPlanet = planetRef.current.position.clone().normalize()
+          
+          // Calculate the camera position opposite to the Sun
+          const cameraDistance = radius * 3 // Adjust this multiplier to change how close the camera is
+          const cameraPosition = planetRef.current.position.clone().add(sunToPlanet.multiplyScalar(cameraDistance))
+
+          // Set camera position and make it look at the planet
+          cameraRef.current.position.copy(cameraPosition)
+          cameraRef.current.lookAt(planetRef.current.position)
+
+          // Rotate the camera around the planet
+          const time = Date.now() * 0.001 // Current time in seconds
+          const rotationSpeed = 0.5 // Adjust this value to change the rotation speed
+          const rotationRadius = radius * 0.5 // Adjust this value to change the rotation radius
+
+          cameraRef.current.position.x += Math.cos(time * rotationSpeed) * rotationRadius
+          cameraRef.current.position.z += Math.sin(time * rotationSpeed) * rotationRadius
+
+          // Ensure the camera always looks at the planet
+          cameraRef.current.lookAt(planetRef.current.position)
+        }
       }
     }
   })

@@ -109,7 +109,7 @@ function App() {
 				<PerspectiveCamera ref={cameraRef} makeDefault position={[0, 30, 50]} fov={75} />
 				<OrbitControls ref={controlsRef} />
 				<ambientLight intensity={0.5} />
-				<Stars radius={500} depth={60} count={20000} factor={7} saturation={0} fade />
+				<Stars radius={600} depth={600} count={5000} factor={1} saturation={3} fade />
 
 				<Sun />
 				{visibleLayers.Asteroids && (
