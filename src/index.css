@@ -31,6 +31,19 @@ h1 {
 	font-family: "Actor", sans-serif;
 }
 
+.audiowide {
+	font-family: "Audiowide", sans-serif;
+}
+
+.audiowide-shadow {
+	text-shadow: 0px 0px 4px #ffffff;
+}
+
+/* Add a hover effect to apply the text shadow */
+.audiowide:hover {
+	text-shadow: 0px 0px 4px #ffffff;
+}
+
 .reverse-checkbox {
 	display: flex;
 	flex-direction: row-reverse;
