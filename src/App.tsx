@@ -43,7 +43,7 @@ const orbitColors = [
 
 function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
-	const [speed, setSpeed] = useState(1);
+	const [speed, setSpeed] = useState(0.00002);
 	const [focusedObject, setFocusedObject] = useState<typeof planets[0] | { name: string } | null>(null);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const controlsRef = useRef<any>(null);
