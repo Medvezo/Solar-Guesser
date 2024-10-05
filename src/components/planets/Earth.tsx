@@ -78,10 +78,27 @@ const Earth = forwardRef<THREE.Mesh, EarthProps>(
 
 				// Update camera position if this planet is focused
 				if (isFocused && cameraRef.current) {
-					const cameraOffset = new THREE.Vector3(radius * 5, radius * 2, radius * 5);
-					const newCameraPosition = earthRef.current.position.clone().add(cameraOffset);
-					cameraRef.current.position.copy(newCameraPosition);
-					cameraRef.current.lookAt(earthRef.current.position);
+					// Calculate the direction from the Sun to Earth
+					const sunToEarth = earthRef.current.position.clone().normalize()
+					
+					// Calculate the camera position opposite to the Sun
+					const cameraDistance = radius * 5 // Adjust this multiplier to change how close the camera is
+					const cameraPosition = earthRef.current.position.clone().add(sunToEarth.multiplyScalar(cameraDistance))
+
+					// Set camera position and make it look at Earth
+					cameraRef.current.position.copy(cameraPosition)
+					cameraRef.current.lookAt(earthRef.current.position)
+
+					// Rotate the camera around Earth
+					const time = Date.now() * 0.001 // Current time in seconds
+					const rotationSpeed = 0.5 // Adjust this value to change the rotation speed
+					const rotationRadius = radius * 1.5 // Adjust this value to change the rotation radius
+
+					cameraRef.current.position.x += Math.cos(time * rotationSpeed) * rotationRadius
+					cameraRef.current.position.z += Math.sin(time * rotationSpeed) * rotationRadius
+
+					// Ensure the camera always looks at Earth
+					cameraRef.current.lookAt(earthRef.current.position)
 				}
 			}
 		});
