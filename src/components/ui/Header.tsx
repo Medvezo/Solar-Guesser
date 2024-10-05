@@ -13,10 +13,7 @@ export default function Header() {
         </svg>
         <h1 className="text-[#AAAAAA] text-2xl">TEAM 42</h1>
       </Link>
-      <nav className="ml-auto">
-        <Link to="/Explore" className="text-[#AAAAAA] hover:text-white transition-colors">Explore</Link>
         {/* Add more navigation links here if needed */}
-      </nav>
     </header>
   )
 }
