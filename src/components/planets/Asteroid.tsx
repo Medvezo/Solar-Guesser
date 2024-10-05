@@ -1,16 +1,17 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useMemo, useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { Line, Html } from '@react-three/drei';
+import { Html, Line } from '@react-three/drei';
 
 interface AsteroidProps {
   position: [number, number, number];
   rotation: [number, number, number];
   scale: number;
   color?: string;
-  speed?: number;
+  speed: number;
   semiMajorAxis: number;
   eccentricity: number;
+  orbitAngle: number;
   onFocus: (name: string, description: string, ref: THREE.Mesh) => void;
   isFocused: boolean;
   cameraRef: React.RefObject<THREE.PerspectiveCamera>;
@@ -21,9 +22,10 @@ const Asteroid: React.FC<AsteroidProps> = ({
   rotation, 
   scale, 
   color = '#8B7D6B', 
-  speed = 1, 
+  speed, 
   semiMajorAxis, 
   eccentricity, 
+  orbitAngle,
   onFocus,
   isFocused,
   cameraRef
@@ -32,19 +34,39 @@ const Asteroid: React.FC<AsteroidProps> = ({
   const [hovered, setHovered] = useState(false);
   const { camera } = useThree();
 
+  useEffect(() => {
+    if (meshRef.current) {
+      meshRef.current.userData.orbitAngle = orbitAngle;
+    }
+  }, [orbitAngle]);
+
   useFrame((_, delta) => {
     if (meshRef.current) {
       // Rotate the asteroid
       meshRef.current.rotation.x += 0.01 * speed * delta;
       meshRef.current.rotation.y += 0.005 * speed * delta;
+      meshRef.current.rotation.z += 0.007 * speed * delta;
 
       // Update orbital position
       const angle = (meshRef.current.userData.angle || 0) + speed * delta * 0.1;
       meshRef.current.userData.angle = angle % (Math.PI * 2);
 
       const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(angle));
-      meshRef.current.position.x = r * Math.cos(angle);
-      meshRef.current.position.z = r * Math.sin(angle);
+      
+      // Calculate position with Z dimension movement and apply the orbit angle
+      const zAmplitude = semiMajorAxis * 0.1;
+      const x = r * Math.cos(angle);
+      const y = zAmplitude * Math.sin(angle * 2);
+      const z = r * Math.sin(angle);
+
+      // Apply the same rotation as the orbit line
+      const rotationMatrix = new THREE.Matrix4().makeRotationX(meshRef.current.userData.orbitAngle || 0);
+      const position = new THREE.Vector3(x, y, z).applyMatrix4(rotationMatrix);
+
+      meshRef.current.position.copy(position);
+
+      // Update asteroid's rotation
+      meshRef.current.rotation.y = angle;
 
       // Update camera if focused
       if (isFocused && cameraRef.current) {
@@ -87,18 +109,27 @@ const Asteroid: React.FC<AsteroidProps> = ({
     }
   };
 
-  // Generate orbit line points
-  const orbitPoints = [];
-  const segments = 64;
-  for (let i = 0; i <= segments; i++) {
-    const angle = (i / segments) * Math.PI * 2;
-    const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(angle));
-    orbitPoints.push(new THREE.Vector3(r * Math.cos(angle), 0, r * Math.sin(angle)));
-  }
+  // Generate orbit line points with angle
+  const orbitPoints = useMemo(() => {
+    const points = [];
+    const segments = 64;
+    const angle = Math.random() * Math.PI * 0.2; // Random angle up to 36 degrees
+    const rotationMatrix = new THREE.Matrix4().makeRotationX(angle);
+
+    for (let i = 0; i <= segments; i++) {
+      const t = (i / segments) * Math.PI * 2;
+      const r = semiMajorAxis * (1 - eccentricity * eccentricity) / (1 + eccentricity * Math.cos(t));
+      const x = r * Math.cos(t);
+      const z = r * Math.sin(t);
+      const point = new THREE.Vector3(x, 0, z).applyMatrix4(rotationMatrix);
+      points.push(point);
+    }
+    return points;
+  }, [semiMajorAxis, eccentricity]);
 
   return (
     <>
-      <Line points={orbitPoints} color="white" opacity={0.2} transparent />
+      <Line points={orbitPoints} color="white" opacity={0.1} transparent lineWidth={0.5} /> {/* Thinner and more transparent line */}
       <mesh 
         ref={meshRef} 
         position={position} 

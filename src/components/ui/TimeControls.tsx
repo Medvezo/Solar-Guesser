@@ -29,7 +29,7 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 		const middleIndex = Math.floor(timeSpeedOptions.length / 2);
 		const speedOption = timeSpeedOptions[value + middleIndex];
 		setSpeed(speedOption ? speedOption.value : 1);
-	};
+	  };
 
 	const resetSpeed = () => {
 		setSpeed(1); // Reset to real-time speed (1x)

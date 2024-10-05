@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
-import { useRef } from "react";
+import { OrbitControls, PerspectiveCamera, Stars, Line } from "@react-three/drei";
 import * as THREE from 'three';
 import ZoomControls from './components/ui/ZoomControls';
 import Asteroid from "./components/planets/Asteroid";
@@ -30,6 +29,18 @@ const planets = [
 	{ name: "Neptune", radius: 3.88, semiMajorAxis: 450, eccentricity: 0.009, rotationSpeed: 0.014, orbitSpeed: 0.0001, textureMap: "/textures/neptune.jpg", description: "Neptune is the eighth and farthest-known Solar planet from the Sun.", type: "ICE GIANT", moons: "14 known moons", gravity: "11.15 m/s2", dayLength: "16h 6m", radiusInKm: "24,622 km", orbitalPeriod: "164.79 years", distanceFromSun: "4.5 billion km", coordinates: "RA 23h 39m 54s" },
 ];
 
+// Add this array of colors for orbit lines
+const orbitColors = [
+  "#FF6B6B", // Mercury
+  "#4ECDC4", // Venus
+  "#45B7D1", // Earth
+  "#FF8C42", // Mars
+  "#98D8C8", // Jupiter
+  "#F3B562", // Saturn
+  "#6A0572", // Uranus
+  "#1A5F7A", // Neptune
+];
+
 function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
 	const [speed, setSpeed] = useState(1);
@@ -51,6 +62,7 @@ function App() {
 	});
 
 	const [focusedObject, setFocusedObject] = useState<{ name: string; description: string } | null>(null);
+	const [asteroidOrbit, setAsteroidOrbit] = useState({ semiMajorAxis: 30, eccentricity: 0.1, angle: 0 });
 
 	const handleLayerToggle = (layer: string, isVisible: boolean) => {
 		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
@@ -106,6 +118,22 @@ function App() {
 		}
 	};
 
+	const asteroidOrbitPoints = useMemo(() => {
+		const points = [];
+		const segments = 64;
+		const rotationMatrix = new THREE.Matrix4().makeRotationX(asteroidOrbit.angle);
+
+		for (let i = 0; i <= segments; i++) {
+			const t = (i / segments) * Math.PI * 2;
+			const r = asteroidOrbit.semiMajorAxis * (1 - asteroidOrbit.eccentricity * asteroidOrbit.eccentricity) / (1 + asteroidOrbit.eccentricity * Math.cos(t));
+			const x = r * Math.cos(t);
+			const z = r * Math.sin(t);
+			const point = new THREE.Vector3(x, 0, z).applyMatrix4(rotationMatrix);
+			points.push(point);
+		}
+		return points;
+	}, [asteroidOrbit]);
+
 	return (
 		<>
 			<Header />
@@ -117,17 +145,21 @@ function App() {
 
 				<Sun />
 				{visibleLayers.Asteroids && (
-					<Asteroid
-						position={[30, 0, 0]}
-						rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
-						scale={0.5}
-						speed={0.5}
-						semiMajorAxis={30}
-						eccentricity={0.1}
-						onFocus={handleObjectFocus}
-						isFocused={focusedObject?.name === "Asteroid"}
-						cameraRef={cameraRef}
-					/>
+					<>
+						<Asteroid
+							position={[30, 0, 0]}
+							rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
+							scale={0.5}
+							speed={speed}
+							semiMajorAxis={asteroidOrbit.semiMajorAxis}
+							eccentricity={asteroidOrbit.eccentricity}
+							orbitAngle={asteroidOrbit.angle}
+							onFocus={handleObjectFocus}
+							isFocused={focusedObject?.name === "Asteroid"}
+							cameraRef={cameraRef}
+						/>
+						<Line points={asteroidOrbitPoints} color="white" opacity={0.1} transparent lineWidth={0.5} />
+					</>
 				)}
 				{visibleLayers.Planets && planets.map((planet) => 
 					planet.component ? (
@@ -155,8 +187,13 @@ function App() {
 						/>
 					)
 				)}
-				{visibleLayers.Orbits && planets.map((planet) => (
-					<OrbitLine key={planet.name} semiMajorAxis={planet.semiMajorAxis} eccentricity={planet.eccentricity} />
+				{visibleLayers.Orbits && planets.map((planet, index) => (
+					<OrbitLine 
+						key={planet.name} 
+						semiMajorAxis={planet.semiMajorAxis} 
+						eccentricity={planet.eccentricity} 
+						color={orbitColors[index] }
+					/>
 				))}
 			</Canvas>
 			{visibleLayers['User Interface'] && (

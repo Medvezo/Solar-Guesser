@@ -4,9 +4,10 @@ import { Line } from '@react-three/drei'
 interface OrbitLineProps {
   semiMajorAxis: number
   eccentricity: number
+  color: string
 }
 
-const OrbitLine = ({ semiMajorAxis, eccentricity }: OrbitLineProps) => {
+const OrbitLine = ({ semiMajorAxis, eccentricity, color }: OrbitLineProps) => {
   const points = []
   const segments = 64
 
@@ -17,7 +18,7 @@ const OrbitLine = ({ semiMajorAxis, eccentricity }: OrbitLineProps) => {
   }
 
   return (
-    <Line points={points} color="white" opacity={0.2} transparent />
+    <Line points={points} color={color} opacity={0.2} transparent />
   )
 }
 
