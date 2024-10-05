@@ -4,6 +4,7 @@ import { OrbitControls, PerspectiveCamera, Stars } from "@react-three/drei";
 import { useRef } from "react";
 import * as THREE from 'three';
 import ZoomControls from './components/ui/ZoomControls';
+import Asteroid from "./components/planets/Asteroid";
 
 // Components
 import Planet from "./components/planets/Planet";
@@ -49,6 +50,8 @@ function App() {
 		Trails: false,
 	});
 
+	const [focusedObject, setFocusedObject] = useState<{ name: string; description: string } | null>(null);
+
 	const handleLayerToggle = (layer: string, isVisible: boolean) => {
 		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
 	};
@@ -89,6 +92,20 @@ function App() {
 		}
 	};
 
+	const handleObjectFocus = (name: string, description: string, ref: THREE.Mesh) => {
+		setFocusedObject({ name, description });
+		if (controlsRef.current) {
+			controlsRef.current.enabled = false;
+		}
+	};
+
+	const handleCloseObjectInfo = () => {
+		setFocusedObject(null);
+		if (controlsRef.current) {
+			controlsRef.current.enabled = true;
+		}
+	};
+
 	return (
 		<>
 			<Header />
@@ -99,7 +116,19 @@ function App() {
 				<Stars radius={500} depth={60} count={20000} factor={7} saturation={0} fade />
 
 				<Sun />
-				{visibleLayers.Asteroids && <AsteroidBelt />}
+				{visibleLayers.Asteroids && (
+					<Asteroid
+						position={[30, 0, 0]}
+						rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
+						scale={0.5}
+						speed={0.5}
+						semiMajorAxis={30}
+						eccentricity={0.1}
+						onFocus={handleObjectFocus}
+						isFocused={focusedObject?.name === "Asteroid"}
+						cameraRef={cameraRef}
+					/>
+				)}
 				{visibleLayers.Planets && planets.map((planet) => 
 					planet.component ? (
 						<planet.component
@@ -108,8 +137,8 @@ function App() {
 							orbitRadius={planet.semiMajorAxis}
 							isDynamic={isDynamic}
 							speed={speed}
-							onFocus={handlePlanetFocus}
-							isFocused={focusedPlanet?.name === planet.name}
+							onFocus={handleObjectFocus}
+							isFocused={focusedObject?.name === planet.name}
 							cameraRef={cameraRef}
 							ringTexture={planet.ringTexture || ''}
 						/>
@@ -120,8 +149,8 @@ function App() {
 							orbitRadius={planet.semiMajorAxis} 
 							isDynamic={isDynamic} 
 							speed={speed}
-							onFocus={handlePlanetFocus} 
-							isFocused={focusedPlanet?.name === planet.name}
+							onFocus={handleObjectFocus} 
+							isFocused={focusedObject?.name === planet.name}
 							cameraRef={cameraRef}
 						/>
 					)
@@ -138,8 +167,8 @@ function App() {
 						speed={speed}
 						setSpeed={setSpeed}
 					/>
-					{focusedPlanet && <PlanetInfo planet={focusedPlanet} onClose={handleClosePlanetInfo} />}
-					<LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedPlanet !== null} />
+					{focusedObject && <PlanetInfo planet={focusedObject} onClose={handleCloseObjectInfo} />}
+					<LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedObject !== null} />
 					<ZoomControls
 						onZoomIn={handleZoomIn}
 						onZoomOut={handleZoomOut}
