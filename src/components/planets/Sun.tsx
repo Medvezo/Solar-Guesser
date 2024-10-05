@@ -78,7 +78,7 @@ const Sun = () => {
   return (
     <group>
       <mesh ref={meshRef}>
-        <sphereGeometry args={[2, 128, 128]} />
+        <sphereGeometry args={[3, 128, 128]} />
         {/* @ts-expect-error */}
         <sunMaterial ref={materialRef} />
       </mesh>

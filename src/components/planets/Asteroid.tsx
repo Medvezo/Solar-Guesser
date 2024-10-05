@@ -28,6 +28,7 @@ const Asteroid: React.FC<AsteroidProps> = ({
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
+   speed = speed/100000;
   useFrame((_, delta) => {
     if (meshRef.current) {
       const time = Date.now() * speed;
