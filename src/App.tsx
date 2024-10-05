@@ -44,7 +44,7 @@ const orbitColors = [
 function App() {
 	const [isDynamic, setIsDynamic] = useState(true);
 	const [speed, setSpeed] = useState(1);
-	// const [focusedPlanet, setFocusedPlanet] = useState<typeof planets[0] | null>(null);
+	const [focusedObject, setFocusedObject] = useState<typeof planets[0] | { name: string } | null>(null);
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const controlsRef = useRef<any>(null);
 	const cameraRef = useRef<THREE.PerspectiveCamera>(null);
@@ -61,28 +61,25 @@ function App() {
 		Trails: false,
 	});
 
-	const [focusedObject, setFocusedObject] = useState<{ name: string; description: string } | null>(null);
 
 	const handleLayerToggle = (layer: string, isVisible: boolean) => {
 		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
 	};
 
-	// const handlePlanetFocus = (name: string) => {
-	// 	const planet = planets.find(p => p.name === name);
-	// 	if (planet) {
-	// 		setFocusedPlanet(planet);
-	// 		if (controlsRef.current) {
-	// 			controlsRef.current.enabled = false;
-	// 		}
-	// 	}
-	// };
+	const handleObjectFocus = (name: string) => {
+		const object = planets.find(p => p.name === name) || { name };
+		setFocusedObject(object);
+		if (controlsRef.current) {
+			controlsRef.current.enabled = false;
+		}
+	};
 
-	// const handleClosePlanetInfo = () => {
-	// 	setFocusedPlanet(null);
-	// 	if (controlsRef.current) {
-	// 		controlsRef.current.enabled = true;
-	// 	}
-	// };
+	const handleCloseObjectInfo = () => {
+		setFocusedObject(null);
+		if (controlsRef.current) {
+			controlsRef.current.enabled = true;
+		}
+	};
 
 	const handleZoomIn = () => {
 		if (cameraRef.current) {
@@ -103,19 +100,7 @@ function App() {
 		}
 	};
 
-	const handleObjectFocus = (name: string, description: string) => {
-		setFocusedObject({ name, description });
-		if (controlsRef.current) {
-			controlsRef.current.enabled = false;
-		}
-	};
-
-	const handleCloseObjectInfo = () => {
-		setFocusedObject(null);
-		if (controlsRef.current) {
-			controlsRef.current.enabled = true;
-		}
-	};
+	
 
 	return (
 		<>
@@ -184,7 +169,12 @@ function App() {
 						speed={speed}
 						setSpeed={setSpeed}
 					/>
-					{focusedObject && <PlanetInfo planet={focusedObject} onClose={handleCloseObjectInfo} />}
+					{focusedObject && (
+						<PlanetInfo
+							planet={focusedObject as typeof planets[0]}
+							onClose={handleCloseObjectInfo}
+						/>
+					)}
 					<LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedObject !== null} />
 					<ZoomControls
 						onZoomIn={handleZoomIn}
