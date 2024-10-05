@@ -32,7 +32,7 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 	  };
 
 	const resetSpeed = () => {
-		setSpeed(1); // Reset to real-time speed (1x)
+		setSpeed(0.00002); // Reset to real-time speed (1x)
 		// Reset the slider to the middle position
 		setSliderValue(0); // Assuming you add this state
 	};
