@@ -74,7 +74,7 @@ const Planet = ({ name, radius, semiMajorAxis, eccentricity, rotationSpeed, orbi
           // Rotate the camera around the planet
           const time = Date.now() * 0.001 // Current time in seconds
           const rotationSpeed = 0.5 // Adjust this value to change the rotation speed
-          const rotationRadius = radius * 0.5 // Adjust this value to change the rotation radius
+          const rotationRadius = radius * 5 // Adjust this value to change the rotation radius
 
           cameraRef.current.position.x += Math.cos(time * rotationSpeed) * rotationRadius
           cameraRef.current.position.z += Math.sin(time * rotationSpeed) * rotationRadius
