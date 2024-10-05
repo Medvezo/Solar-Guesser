@@ -10,6 +10,7 @@ import Planet from "./components/planets/Planet";
 import Sun from "./components/planets/Sun";
 import OrbitLine from "./components/view/OrbitLine";
 import Controls from "./components/ui/TimeControls";
+
 import PlanetInfo from "./components/ui/PlanetInfo";
 import AsteroidBelt from "./components/planets/AsteroidBelt";
 import Earth from "./components/planets/Earth";
@@ -62,7 +63,6 @@ function App() {
 	});
 
 	const [focusedObject, setFocusedObject] = useState<{ name: string; description: string } | null>(null);
-	const [asteroidOrbit, setAsteroidOrbit] = useState({ semiMajorAxis: 30, eccentricity: 0.1, angle: 0 });
 
 	const handleLayerToggle = (layer: string, isVisible: boolean) => {
 		setVisibleLayers(prev => ({ ...prev, [layer]: isVisible }));
@@ -118,22 +118,6 @@ function App() {
 		}
 	};
 
-	const asteroidOrbitPoints = useMemo(() => {
-		const points = [];
-		const segments = 64;
-		const rotationMatrix = new THREE.Matrix4().makeRotationX(asteroidOrbit.angle);
-
-		for (let i = 0; i <= segments; i++) {
-			const t = (i / segments) * Math.PI * 2;
-			const r = asteroidOrbit.semiMajorAxis * (1 - asteroidOrbit.eccentricity * asteroidOrbit.eccentricity) / (1 + asteroidOrbit.eccentricity * Math.cos(t));
-			const x = r * Math.cos(t);
-			const z = r * Math.sin(t);
-			const point = new THREE.Vector3(x, 0, z).applyMatrix4(rotationMatrix);
-			points.push(point);
-		}
-		return points;
-	}, [asteroidOrbit]);
-
 	return (
 		<>
 			<Header />
@@ -145,21 +129,18 @@ function App() {
 
 				<Sun />
 				{visibleLayers.Asteroids && (
-					<>
-						<Asteroid
-							position={[30, 0, 0]}
-							rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
-							scale={0.5}
-							speed={speed}
-							semiMajorAxis={asteroidOrbit.semiMajorAxis}
-							eccentricity={asteroidOrbit.eccentricity}
-							orbitAngle={asteroidOrbit.angle}
-							onFocus={handleObjectFocus}
-							isFocused={focusedObject?.name === "Asteroid"}
-							cameraRef={cameraRef}
-						/>
-						<Line points={asteroidOrbitPoints} color="white" opacity={0.1} transparent lineWidth={0.5} />
-					</>
+					<Asteroid
+						position={[30, 0, 0]}
+						rotation={[Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI]}
+						scale={0.5}
+						speed={speed}
+						semiMajorAxis={30}
+						eccentricity={0.1}
+						orbitAngle={Math.random() * Math.PI * 0.2}
+						onFocus={handleObjectFocus}
+						isFocused={focusedObject?.name === "Asteroid"}
+						cameraRef={cameraRef}
+					/>
 				)}
 				{visibleLayers.Planets && planets.map((planet) => 
 					planet.component ? (
