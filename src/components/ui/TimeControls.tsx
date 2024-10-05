@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Slider, Button } from "@nextui-org/react";
+import { Slider } from "@nextui-org/react";
 import { Calendar } from "@nextui-org/react";
 import { format, addSeconds } from "date-fns";
 import { timeSpeedOptions } from "@/lib/const";
@@ -19,7 +19,7 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			setCurrentDateTime((prevDateTime) => addSeconds(prevDateTime, speed));
+			setCurrentDateTime((prevDateTime) => addSeconds(prevDateTime, speed*52560));
 		}, 1000);
 
 		return () => clearInterval(timer);
@@ -54,12 +54,11 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 		<div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 flex flex-col gap-7  p-4 rounded-full min-w-[43vw]">
 			<section className="flex items-center justify-center gap-8">
 				<div className="flex flex-col items-center justify-center">
-					<Button
-						className="w-[200px] text-[#888888] bg-transparent border border-[#1D1D1D] text-xl"
-						onClick={() => setShowCalendar(!showCalendar)}
+					<div
+						className="text-center w-[200px] text-[#888888] bg-transparent border border-[#1D1D1D] text-xl"
 					>
 						{format(currentDateTime, "d MMM, yyyy")}
-					</Button>
+					</div>
 					{showCalendar && (
 						<div className="absolute bottom-full mb-2">
 							<Calendar
@@ -84,9 +83,9 @@ const TimeControls: React.FC<TimeControlsProps> = ({ speed, setSpeed }) => {
 					{timeSpeedOptions.find((option) => option.value === Math.abs(speed))
 						?.label || "Real Rate"}
 				</div>
-				<Button className="text-[#888888] w-[200px] bg-transparent border border-[#1D1D1D] text-xl">
+				<div className=" text-center text-[#888888] w-[200px] bg-transparent border border-[#1D1D1D] text-xl">
 					{format(currentDateTime, "p")}
-				</Button>
+				</div>
 			</section>
 
 			<Slider
