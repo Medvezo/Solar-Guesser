@@ -71,6 +71,19 @@ function ExplorePage() {
 
     return (
         <>
+            <div 
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundImage: 'url(/textures/stars_milky_way.jpg)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    zIndex: -1
+                }}
+            />
             <Canvas style={{ height: "100vh" }}>
                 <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 30, 50]} fov={75} />
                 <OrbitControls ref={controlsRef} />
