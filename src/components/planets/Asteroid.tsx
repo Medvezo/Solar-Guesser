@@ -25,8 +25,6 @@ const Asteroid: React.FC<AsteroidProps> = ({
   eccentricity, 
   orbitAngle, 
   onFocus,
-  isFocused,
-  cameraRef
 }) => {
   const meshRef = useRef<THREE.Mesh>(null);
 
