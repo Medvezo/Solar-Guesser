@@ -67,3 +67,22 @@ h1 {
 .custom-checkbox [data-selected="true"] {
 	background-color: rgba(255, 255, 255, 0.1);
 }
+
+@keyframes blink {
+	0% { opacity: 0; }
+	50% { opacity: 0; }
+	100% { opacity: 1; }
+  }
+  
+  .dots span {
+	animation: blink 1.4s infinite;
+	animation-fill-mode: both;
+  }
+  
+  .dots span:nth-child(2) {
+	animation-delay: 0.2s;
+  }
+  
+  .dots span:nth-child(3) {
+	animation-delay: 0.4s;
+  }
