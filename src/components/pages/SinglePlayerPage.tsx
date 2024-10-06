@@ -16,7 +16,7 @@ const SinglePlayerPage: React.FC = () => {
 
 	useEffect(() => {
 		// Set a new correct answer for each round
-		setCorrectAnswer("Earth");
+		setCorrectAnswer("Mars");
 	}, [round]);
 
 	const handleSave = (selectedPlanet: string) => {
@@ -62,7 +62,7 @@ const SinglePlayerPage: React.FC = () => {
 					/>
 				</svg>
 			</Link>
-			<Panorama360View imagePath="/images/360test1.avif" />
+			<Panorama360View imagePath="/images/mars360.png" />
 
 			<ScoreBoard
 				score={score}
