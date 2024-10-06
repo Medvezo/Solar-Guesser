@@ -42,7 +42,7 @@ const SimpleSolarSystem: React.FC<SimpleSolarSystemProps> = ({ onSave }) => {
 	};
 
 	return (
-		<div className="w-full h-full bg-gray-900 p-4 relative">
+		<div className="w-full h-full bg-[#3CADD525] opacity-50 hover:opacity-100 transition-opacity duration-300 p-4 relative">
 			<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 justify-items-center">
 				{planets.map((planet) => (
 					<PlanetGridItem

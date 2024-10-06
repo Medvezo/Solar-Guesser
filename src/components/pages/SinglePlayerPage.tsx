@@ -3,20 +3,21 @@ import { Link } from "react-router-dom";
 import SimpleSolarSystem from "../ui/SimpleSolarSystem";
 import Panorama360View from "../ui/Panorama360View";
 import ScoreBoard from "../ui/ScoreBoard";
+import ResultsPage from "./ResultsPage";
 
 const SinglePlayerPage: React.FC = () => {
 	const [savedPlanets, setSavedPlanets] = useState<string[]>([]);
 	const [score, setScore] = useState<number>(0);
 	const [round, setRound] = useState<number>(1);
-	const [correctAnswer, setCorrectAnswer] = useState<string>("");
+	const [correctAnswer, setCorrectAnswer] = useState<string>("Earth");
+	const [gameOver, setGameOver] = useState<boolean>(false);
 
-	const totalRounds = 1;
+	const totalRounds = 1; // Increased for a more interesting game
 
 	useEffect(() => {
 		// Set a new correct answer for each round
 		setCorrectAnswer("Earth");
 	}, [round]);
-
 
 	const handleSave = (selectedPlanet: string) => {
 		setSavedPlanets([...savedPlanets, selectedPlanet]);
@@ -28,10 +29,14 @@ const SinglePlayerPage: React.FC = () => {
 		if (round < totalRounds) {
 			setRound(prevRound => prevRound + 1);
 		} else {
-			// Game over logic here
-			console.log("Game Over! Final Score:", score + (selectedPlanet === correctAnswer ? 1 : 0));
+			// Game over
+			setGameOver(true);
 		}
 	};
+
+	if (gameOver) {
+		return <ResultsPage score={score} totalRounds={totalRounds} />;
+	}
 
 	return (
 		<div className="w-full h-screen bg-gray-900 text-white">
@@ -65,7 +70,7 @@ const SinglePlayerPage: React.FC = () => {
 				totalRounds={totalRounds}
 			/>
 
-			<div className="mx-auto px-4 py-8 absolute bottom-10 right-10">
+			<div className="mx-auto px-4 py-8 absolute bottom-0 right-5">
 				<div className="bg-gray-800 rounded-lg overflow-hidden" style={{ width: "600px", height: "350px" }}>
 					<SimpleSolarSystem onSave={handleSave} />
 				</div>
