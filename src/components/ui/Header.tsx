@@ -53,7 +53,7 @@ export default function Header() {
 						stroke-linejoin="round"
 					/>
 				</svg>
-				<h1 className="text-[#AAAAAA] text-2xl">TEAM 42</h1>
+				<h1 className="text-[#AAAAAA] text-2xl">Solar Guesser</h1>
 			</Link>
 			<div className="ml-auto flex items-center gap-4 mt-16 ">
 				<Popover placement="bottom-end">
