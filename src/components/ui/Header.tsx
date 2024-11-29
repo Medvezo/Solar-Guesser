@@ -1,11 +1,36 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Popover, PopoverTrigger, PopoverContent } from "@nextui-org/react";
 
 export default function Header() {
 	const [progress] = useState(0);
 	const location = useLocation();
 	const isBlurred = location.pathname === '/singleplayer' || location.pathname === '/multiplayer';
+	const [timeLeft, setTimeLeft] = useState("30:00");
+
+	useEffect(() => {
+		const startTimer = () => {
+			const endTime = new Date();
+			endTime.setMinutes(endTime.getMinutes() + 30); // Set 30 minutes from now
+			
+			return setInterval(() => {
+				const now = new Date();
+				const difference = endTime.getTime() - now.getTime();
+
+				if (difference <= 0) {
+					// Instead of clearing interval, start a new timer
+					return startTimer();
+				}
+
+				const minutes = Math.floor((difference / 1000 / 60) % 60);
+				const seconds = Math.floor((difference / 1000) % 60);
+				setTimeLeft(`${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`);
+			}, 1000);
+		};
+
+		const timer = startTimer();
+		return () => clearInterval(timer);
+	}, []);
 
 	return (
 		<header className={`fixed top-0 left-0 w-full h-16 pl-14 px-7 z-50 flex justify-start items-center gap-1.5 ${isBlurred ? 'bg-transparent backdrop-blur-xl' : 'bg-transparent'}`}>
@@ -69,7 +94,7 @@ export default function Header() {
 					<PopoverContent className="bg-[#3C79D526] p-6 rounded-lg w-80 flex justify-start items-start">
 						<div className="text-white text-xl font-bold mb-4">MISSIONS</div>
 						<div className="flex items-center mb-2 gap-4 justify-center w-full">
-							<span className="text-[#FFA726] font-bold ">29m 19s</span>
+							<span className="text-[#FFA726] font-bold ">{timeLeft}</span>
 							<svg
 								width="33"
 								height="37"
