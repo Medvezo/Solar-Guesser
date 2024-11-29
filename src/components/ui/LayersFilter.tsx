@@ -22,7 +22,12 @@ const LayersFilter: React.FC<LayersFilterProps> = ({
 
 	const handleSecondaryChange = (values: string[]) => {
 		secondaryLayers.forEach((layer) => {
-			onLayerToggle(layer.name, values.includes(layer.name));
+			if (layer.name === 'User Interface') {
+				onLayerToggle(layer.name, values.includes(layer.name));
+				setIsExpanded(values.includes(layer.name));
+			} else {
+				onLayerToggle(layer.name, values.includes(layer.name));
+			}
 		});
 	};
 

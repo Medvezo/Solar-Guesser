@@ -91,7 +91,7 @@ export default function Header() {
 							/>
 						</aside>
 					</PopoverTrigger>
-					<PopoverContent className="bg-[#3C79D526] p-6 rounded-lg w-80 flex justify-start items-start">
+					<PopoverContent className="bg-[#05204a] p-6 rounded-lg w-80 flex justify-start items-start">
 						<div className="text-white text-xl font-bold mb-4">MISSIONS</div>
 						<div className="flex items-center mb-2 gap-4 justify-center w-full">
 							<span className="text-[#FFA726] font-bold ">{timeLeft}</span>

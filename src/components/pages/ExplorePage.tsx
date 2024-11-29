@@ -154,7 +154,6 @@ function ExplorePage() {
                             onClose={handleCloseObjectInfo}
                         />
                     )}
-                    <LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedObject !== null} />
                     <ZoomControls
                         onZoomIn={handleZoomIn}
                         onZoomOut={handleZoomOut}
@@ -162,6 +161,7 @@ function ExplorePage() {
                     />
                 </>
             )}
+            <LayersFilter onLayerToggle={handleLayerToggle} isPlanetFocused={focusedObject !== null} />
         </>
     );
 }
