@@ -1,4 +1,3 @@
-import React from "react";
 import { Tooltip } from "@nextui-org/react";
 
 interface StreakDay {
@@ -12,14 +11,28 @@ interface StreakDisplayProps {
 }
 
 const StreakDisplay = ({ streakDays = [] }) => {
-  // Default to 7 days if no streak data provided
-  const defaultDays = Array(7).fill({
-    date: "",
-    completed: false,
-    isFireStreak: false,
-  });
+  // Generate last 7 days including today
+  const generateLastSevenDays = () => {
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      days.push({
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        completed: false,
+        isFireStreak: false,
+      });
+    }
+    return days;
+  };
 
-  const days = [...defaultDays.slice(0, 7 - streakDays.length), ...streakDays];
+  // Merge default days with streak days based on date
+  const mergedDays = generateLastSevenDays().map(defaultDay => {
+    const matchingStreakDay = streakDays.find(
+      streakDay => new Date(streakDay.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) === defaultDay.date
+    );
+    return matchingStreakDay || defaultDay;
+  });
 
   return (
     <div className="flex items-center gap-2 bg-[#3C79D526] rounded-xl p-4">
@@ -37,13 +50,13 @@ const StreakDisplay = ({ streakDays = [] }) => {
         </div>
       </div>
       <div className="flex gap-2">
-        {days.map((day, index) => (
+        {mergedDays.map((day, index) => (
           <Tooltip
             key={index}
             content={
               <div className="px-2 py-1">
                 <p className="text-sm text-gray-300">
-                  {day.date || `Day ${index + 1}`}
+                  {day.date}
                 </p>
               </div>
             }

@@ -1,8 +1,20 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import BadgesDisplay from "../container/BadgesDisplay";
+import StreakDisplay from "../container/StreakDisplay";
 
 const HomePage: React.FC = () => {
+	// This is example data - you'll replace this with your actual state management
+	const exampleStreakDays = Array.from({ length: 3 }, (_, i) => {
+		const date = new Date();
+		date.setDate(date.getDate() - (2 - i)); // Get last 3 days including today
+		return {
+			date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+			completed: i < 2, // First 2 days completed
+			isFireStreak: false
+		};
+	});
+
 	return (
 		<>
 			<div className="flex flex-col items-start  justify-center h-screen bg-black text-white bg-[url('/images/HomeBG.png')] bg-cover bg-center mt-10 w-full ">
@@ -30,12 +42,8 @@ const HomePage: React.FC = () => {
 			<div className="absolute top-1/2 right-5 transform -translate-y-1/2">
 				<BadgesDisplay />
 			</div>
-			<div className="absolute bottom-10 right-5 pointer-events-none">
-				<img
-					src="/images/streak.png"
-					alt="Streak"
-					className="w-96 h-auto cursor-pointer pointer-events-none"
-				/>
+			<div className="absolute bottom-10 right-5">
+				<StreakDisplay streakDays={exampleStreakDays} />
 			</div>
 		</>
 	);
