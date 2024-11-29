@@ -44,7 +44,7 @@ const StreakDisplay = ({ streakDays = [] }) => {
         />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center flex flex-col justify-center items-center mt-1 -rotate-[15deg] text-sm">
           <span className="text-black font-bold text-sm">
-            {streakDays.filter(day => day.completed).length}
+            {streakDays.filter(day => day.isFireStreak).length}
           </span>
           <span className="text-black text-sm block">days</span>
         </div>
@@ -66,8 +66,9 @@ const StreakDisplay = ({ streakDays = [] }) => {
               className={`relative w-10 h-10 rounded-lg border-2 flex items-center justify-center transition-all duration-300 ${
                 day.isFireStreak
                     ? "border-orange-500 bg-[#FE6816A3]"
-                    // : "border-[#3CADD5] bg-[#3CADD526]"
-                  : "border-gray-600 bg-transparent"
+                    : day.date === new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+                      ? "border-sky-500 bg-transparent"
+                      : "border-gray-600 bg-transparent"
               }`}
             >
               {day.isFireStreak && (
