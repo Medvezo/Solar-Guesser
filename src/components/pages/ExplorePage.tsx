@@ -11,6 +11,7 @@ import Controls from "../ui/TimeControls";
 import PlanetInfo from "../ui/PlanetInfo";
 import LayersFilter from "../ui/LayersFilter";
 import { planets, orbitColors } from '../../lib/const';
+import GoBackButton from "../common/GoBackButton";
 
 function ExplorePage() {
     const [isDynamic, setIsDynamic] = useState(true);
@@ -142,6 +143,7 @@ function ExplorePage() {
             </Canvas>
             {visibleLayers['User Interface'] && (
                 <>
+                    <GoBackButton size="sm" position="high" />
                     <Controls
                         isDynamic={isDynamic}
                         setIsDynamic={setIsDynamic}
