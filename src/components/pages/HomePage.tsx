@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import BadgesDisplay from "../container/BadgesDisplay";
 
 const HomePage: React.FC = () => {
 	return (
@@ -26,12 +27,8 @@ const HomePage: React.FC = () => {
 					</Link>
 				</div>
 			</div>
-			<div className="absolute top-1/2 right-5 transform -translate-y-1/2 pointer-events-none">
-				<img
-					src="/images/badges.png"
-					alt="Badges"
-					className="w-auto h-80 cursor-pointer pointer-events-none"
-				/>
+			<div className="absolute top-1/2 right-5 transform -translate-y-1/2">
+				<BadgesDisplay />
 			</div>
 			<div className="absolute bottom-10 right-5 pointer-events-none">
 				<img
