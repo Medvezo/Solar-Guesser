@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import GoBackButton from "../common/GoBackButton";
 import SimpleSolarSystem from "../ui/SimpleSolarSystem";
 import Panorama360View from "../ui/Panorama360View";

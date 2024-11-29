@@ -10,7 +10,7 @@ interface StreakDisplayProps {
   streakDays: StreakDay[];
 }
 
-const StreakDisplay = ({ streakDays = [] }) => {
+const StreakDisplay = ({ streakDays = [] }: StreakDisplayProps) => {
   // Generate last 7 days including today
   const generateLastSevenDays = () => {
     const days = [];
